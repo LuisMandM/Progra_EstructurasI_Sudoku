@@ -14,10 +14,12 @@ public class Main {
     static boolean[] no_rep_fil = {false, false, false, false, false, false, false, false, false,};
     static boolean[] no_rep_reg = {false, false, false, false, false, false, false, false, false,};
 
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String entrada_1;
+        boolean canPlay = true;
 
 
         do {
@@ -25,16 +27,16 @@ public class Main {
             System.out.print("Ingrese la fila en la que quiere agregar: ");
             entrada_1 = br.readLine().toLowerCase();
             if (!entrada_1.equals("fin")) {
-                int fila = 0;
                 try {
-                    fila = Integer.parseInt(entrada_1)-1;
+                    int fila = Integer.parseInt(entrada_1) - 1;
                     System.out.print("Ingrese la columna en la que quiere agregar: ");
-                    int columna = Integer.parseInt(br.readLine())-1;
+                    int columna = Integer.parseInt(br.readLine()) - 1;
                     System.out.print("Ingrese el valor a agregar: ");
                     int valor_juego = Integer.parseInt(br.readLine());
-                    if (fila >= 0 && fila < 9 && columna >= 0 && columna < 9 && valor_juego > 0 && valor_juego <= 9){
+                    if (fila >= 0 && fila < 9 && columna >= 0 && columna < 9 && valor_juego > 0 && valor_juego <= 9) {
+                        VerificacionJugada(fila, columna, valor_juego);
                         tablero[fila][columna] = valor_juego;
-                        VerificacionJugada(fila,columna,valor_juego);
+
                     } else {
                         System.out.println("Error: Verifica los datos ingresados\n");
                     }
@@ -42,9 +44,13 @@ public class Main {
                     System.out.println("\nError:Entrada invalida\n");
                 }
             }
-        } while (!IsFull() || entrada_1.equals("fin"));
 
-        if (no_rep_reg.equals(true) && no_rep_fil.equals(true) && no_rep_col.equals(true)) {
+            if (IsFull() || entrada_1.equals("fin")) {
+                canPlay = false;
+            }
+        } while (canPlay);
+
+        if (VerificarRepeticion()) {
             System.out.println("\nFelicidades has ganado");
         } else {
             System.out.println("Game Over Bitch");
@@ -74,7 +80,7 @@ public class Main {
                 }
             }
             if ((i + 1) % 3 == 0) {
-                System.out.println("\n ___________________________");
+                System.out.println("\n ______________________________");
             } else {
                 System.out.println();
             }
@@ -107,7 +113,6 @@ public class Main {
             no_rep_fil[fila] = true;
         }
 
-
         //Recorrer Columnas unitarias
         int num_rep_col = 0;
         for (int j = 0; j < tablero[fila].length; j++) {
@@ -120,13 +125,12 @@ public class Main {
         }
 
         //recorrer region
-
         //init pos fila
         int init_pos_x = fila / 3;
         int init_pos_f = init_pos_x * 3;
 
         //init pos fila
-        int init_pos_y = fila / 3;
+        int init_pos_y = columna / 3;
         int init_pos_c = init_pos_y * 3;
 
         int ver_rep = 0;
@@ -174,29 +178,39 @@ public class Main {
                 }
             }
         }
+    }
 
-
+    private static boolean VerificarRepeticion() {
+        boolean win = true;
+        for (boolean columna : no_rep_col) {
+            if (!columna) {
+                win = false;
+                break;
+            }
+        }
+        for (boolean fila : no_rep_fil) {
+            if (!fila) {
+                win = false;
+                break;
+            }
+        }
+        for (boolean region : no_rep_reg) {
+            if (!region) {
+                win = false;
+                break;
+            }
+        }
+        return win;
     }
 
 }
 
+/*
+ static boolean[] no_rep_col = {true, true, true, true, true, false, false, true, true,};
+    static boolean[] no_rep_fil = {true, true, true, true, true, true, true, true, false,};
+    static boolean[] no_rep_reg = {true, true, true, true, true, true, true, false, false,};
 
- /*Recorrer en columnas
-
-        for (int i = 0; i < tablero.length; i++) {
-            for (int j = 0; j < tablero[i].length; j++) {
-                if(tablero[j][i] == valor_juego ){
-                    num_rep_col++;
-                }
-            }
-        }*/
-
-//Comprobacion repeticion init
-        /*Recorrer en filas
-        for (int i = 0; i < tablero.length; i++) {
-            for (int j = 0; j < tablero[i].length; j++) {
-                if(tablero[i][j] == valor_juego && tablero[i][j] != 0){
-                    num_rep_fil++;
-                }
-            }
-        }*/
+    static int[][] tablero = {{5, 3, 4, 6, 7, 8, 9, 1, 2}, {6, 7, 2, 1, 9, 5, 3, 4, 8}, {1, 9, 8, 3, 4, 2, 5, 6, 7},
+            {8, 5, 9, 7, 6, 1, 4, 2, 3}, {4, 2, 6, 8, 5, 3, 7, 9, 1}, {7, 1, 3, 9, 2, 4, 8, 5, 6},
+            {9, 6, 1, 5, 3, 7, 2, 8, 4}, {2, 8, 7, 4, 1, 9, 6, 3, 5}, {3, 4, 5, 2, 8, 0, 0, 7, 9}};
+    */
